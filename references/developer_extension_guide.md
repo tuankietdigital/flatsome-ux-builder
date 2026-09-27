@@ -152,3 +152,39 @@ add_ux_builder_shortcode( 'my_custom_container', array(
     ),
 ) );
 ```
+
+---
+
+## 5. TÙY BIẾN HOẶC GỠ BỎ ELEMENT CÓ SẴN TRONG FLATSOME
+
+Dựa trên mã nguồn gốc `inc/builder/core/server/helpers/shortcodes.php`, Flatsome cung cấp 2 hàm tiện ích để can thiệp vào các element cốt lõi của theme:
+
+### 5.1. Chỉnh sửa thuộc tính của Element có sẵn (`ux_builder_edit_element`):
+Ví dụ: Muốn bổ sung thêm tùy chọn màu sắc mới vào shortcode `[button]` của Flatsome:
+```php
+add_action( 'ux_builder_setup', function() {
+    if ( function_exists( 'ux_builder_edit_element' ) ) {
+        ux_builder_edit_element( 'button', array(
+            'options' => array(
+                'custom_badge' => array(
+                    'type'    => 'textfield',
+                    'heading' => __( 'Huy Hiệu Phụ (Badge)', 'flatsome' ),
+                    'default' => '',
+                ),
+            ),
+        ) );
+    }
+} );
+```
+
+### 5.2. Gỡ bỏ Element không mong muốn (`remove_ux_builder_shortcode`):
+Ví dụ: Ẩn bớt các element không dùng để giao diện kéo thả gọn gàng hơn cho khách hàng:
+```php
+add_action( 'ux_builder_setup', function() {
+    if ( function_exists( 'remove_ux_builder_shortcode' ) ) {
+        // Gỡ bỏ element bản đồ Google Map nếu website không dùng đến
+        remove_ux_builder_shortcode( 'map' );
+    }
+} );
+```
+

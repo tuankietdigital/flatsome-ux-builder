@@ -1,235 +1,131 @@
-# QUY CHUẨN HỆ THỐNG LƯỚI 12 CỘT & NGUYÊN TẮC LỒNG THẺ TRONG FLATSOME
+# Hệ Thống Lưới 12 Cột, Flexbox Stack & Responsive 3 Thiết Bị (Flatsome 3.20.5)
 
-Tài liệu này cung cấp hướng dẫn chuyên sâu về toán học lưới (Grid Math), phân cấp lồng thẻ an toàn và quy tắc responsive đa thiết bị trong Flatsome UX Builder.
-
----
-
-## 1. TOÁN HỌC HỆ THỐNG LƯỚI 12 CỘT (THE 12-COLUMN GRID MATH)
-
-Flatsome xây dựng bố cục dựa trên hệ thống lưới 12 cột (12-column grid system) sử dụng Flexbox hiện đại. Mọi hàng (`[row]`) được chia thành 12 phần bằng nhau.
-
-### 1.1. Công Thức Tổng Bằng 12
-Trong cùng một hàng ngang trên Desktop:
-$$\sum \text{span} = 12$$
-
-Nếu tổng số `span` vượt quá 12, các cột thừa sẽ tự động rớt xuống hàng tiếp theo (Column Wrapping). Trừ khi đó là chủ đích thiết kế (vd: lưới 6 sản phẩm chia làm 2 hàng 3 cột `span="4"`), hãy luôn đảm bảo tổng các cột cùng hàng bằng đúng 12 để tránh khoảng trống thừa (whitespace gap).
-
-### 1.2. Bảng Phân Bổ Cột Chuẩn Hóa
-| Số lượng cột | Giá trị `span` Desktop | Giá trị `span__md` Tablet | Giá trị `span__sm` Mobile | Ứng dụng thực tế |
-| :---: | :---: | :---: | :---: | :--- |
-| **1 cột** | `span="12"` | `span__md="12"` | `span__sm="12"` | Khối tiêu đề, Banner toàn trang, Bài viết đơn. |
-| **2 cột đều** | `span="6"` $\times$ 2 | `span__md="6"` $\times$ 2 | `span__sm="12"` $\times$ 2 | Cột trái Hình ảnh / Cột phải Văn bản & CTA. |
-| **3 cột đều** | `span="4"` $\times$ 3 | `span__md="6"` hoặc `"12"` | `span__sm="12"` $\times$ 3 | 3 Gói dịch vụ, 3 Lợi ích chính, 3 Cột Footer. |
-| **4 cột đều** | `span="3"` $\times$ 4 | `span__md="6"` $\times$ 4 | `span__sm="12"` $\times$ 4 | Khối 4 Tính năng (Icon Box), 4 Cột Widget Footer. |
-| **6 cột đều** | `span="2"` $\times$ 6 | `span__md="4"` $\times$ 6 | `span__sm="6"` $\times$ 6 | Logo đối tác, Danh mục con rút gọn. |
-| **Bất đối xứng (3 : 9)** | `span="3"` + `span="9"` | `span__md="12"` + `"12"` | `span__sm="12"` + `"12"` | Sidebar trái + Nội dung chính bài viết / Shop. |
-| **Bất đối xứng (9 : 3)** | `span="9"` + `span="3"` | `span__md="12"` + `"12"` | `span__sm="12"` + `"12"` | Nội dung chính + Sidebar phải. |
-| **Bất đối xứng (4 : 8)** | `span="4"` + `span="8"` | `span__md="12"` + `"12"` | `span__sm="12"` + `"12"` | Ảnh đại diện hồ sơ + Thông tin giới thiệu chi tiết. |
-| **Bất đối xứng (5 : 7)** | `span="5"` + `span="7"` | `span__md="12"` + `"12"` | `span__sm="12"` + `"12"` | Form tư vấn nổi bật + Lợi ích kèm lời chứng thực. |
+> **Tác giả:** Quách Trần Tuấn Kiệt  
+> **Kiến trúc:** Đối chiếu và chuẩn hóa 100% theo hệ thống lưới Flexbox & Media Queries gốc của Flatsome (`assets/css/flatsome.css` & `inc/builder/shortcodes/row.php`, `col.php`, `ux_stack.php`).
 
 ---
 
-## 2. HỆ THỐNG BREAKPOINTS & MA TRẬN PHÂN BỔ CỘT 3 THIẾT BỊ
+## 1. MA TRẬN 3 ĐIỂM NGẮT THIẾT BỊ NATIVE (3-BREAKPOINT MATRIX)
 
-Flatsome phân chia giao diện thành 3 mốc màn hình (Viewports) chuẩn quốc tế:
-1. **Large (Desktop):** Chiều rộng màn hình $\ge 850\text{px}$ (khai báo thuộc tính gốc: `span`, `columns`, `height`, `padding`).
-2. **Medium (Tablet):** Chiều rộng màn hình từ $550\text{px}$ đến $849\text{px}$ (khai báo hậu tố `__md`: `span__md`, `columns__md`, `height__md`, `padding__md`).
-3. **Small (Mobile):** Chiều rộng màn hình $< 550\text{px}$ (khai báo hậu tố `__sm`: `span__sm`, `columns__sm`, `height__sm`, `padding__sm`).
+Mã nguồn CSS gốc của Flatsome (`flatsome.css`) sử dụng chính xác 2 mốc ngắt phân chia 3 môi trường hiển thị:
 
-```mermaid
-graph TD
-    Screen["Màn Hình Thiết Bị"] -->| >= 850px | Desktop["Desktop (PC/Laptop):\nspan='4' (3 Cột ngang cân xứng)"]
-    Screen -->| 550px - 849px | Tablet["Tablet (iPad/Tablet):\nspan__md='6' (2 Cột ngang + 1 Cột rớt hàng)"]
-    Screen -->| < 550px | Mobile["Mobile (Điện Thoại):\nspan__sm='12' (100% Full Width 1 Cột dọc)"]
-```
-
-### 2.1. Ma Trận Chuyển Đổi Cột Chuẩn Hóa 3 Màn Hình:
-| Loại Bố Cục | Desktop ($\ge 850\text{px}$) | Tablet ($550 - 849\text{px}$) | Mobile ($< 550\text{px}$) | Trải Nghiệm Người Dùng (UX) |
-| :--- | :---: | :---: | :---: | :--- |
-| **Lưới 4 Cột** | `span="3"` | `span__md="6"` | `span__sm="12"` (hoặc `"6"`) | Desktop 4 cột $\rightarrow$ Tablet chia 2 hàng 2 cột $\rightarrow$ Mobile xếp 1 cột dọc thanh thoát. |
-| **Lưới 3 Cột** | `span="4"` | `span__md="6"` hoặc `"12"` | `span__sm="12"` | Desktop 3 cột đều $\rightarrow$ Tablet 2 cột hoặc 1 cột $\rightarrow$ Mobile cuộn dọc 100%. |
-| **Lưới 2 Cột Đều** | `span="6"` | `span__md="6"` hoặc `"12"` | `span__sm="12"` | Desktop 2 bên $\rightarrow$ Tablet giữ 2 bên $\rightarrow$ Mobile xếp chồng ảnh trước/chữ sau. |
-| **Lưới Lệch 4 : 8** | `span="4"` + `span="8"` | `span__md="12"` + `"12"` | `span__sm="12"` + `"12"` | Desktop bài lớn + danh sách $\rightarrow$ Tablet & Mobile tự động xếp chồng full-width. |
-| **Lưới Lệch 3 : 9** | `span="3"` + `span="9"` | `span__md="12"` + `"12"` | `span__sm="12"` + `"12"` | Sidebar chuyển xuống dưới hoặc ẩn trên Mobile để ưu tiên nội dung chính. |
-
-### 2.2. Quy Tắc Bắt Buộc Về Responsive Cột:
-- **Tuyệt đối không để trống `span__sm`:** Nếu thiếu `span__sm`, trình duyệt điện thoại sẽ cố ép cột hiển thị theo tỷ lệ Desktop, dẫn đến vỡ chữ, tràn chữ và xuất hiện thanh cuộn ngang gây lỗi Mobile-Friendly của Google.
-- **Quy tắc 2 Cột Trên Mobile (`span__sm="6"`):** Chỉ áp dụng khi nội dung trong cột là dạng nhỏ gọn (Card sản phẩm tối giản, ảnh thumbnail danh mục, logo đối tác). Không dùng `span__sm="6"` cho các khối có đoạn văn bản dài hoặc form đăng ký phức tạp.
+| Thiết Bị | Khoảng Kích Thước Màn Hình | Media Query Gốc Của Flatsome | Quy Chuẩn Thuộc Tính Shortcode |
+| :--- | :--- | :--- | :--- |
+| **Desktop** | $\ge 850\text{px}$ (Large) | `@media screen and (min-width: 850px)` | Không dùng hậu tố (ví dụ: `span="4"`, `gap="1.5rem"`) |
+| **Tablet** | $550\text{px} - 849\text{px}$ (Medium) | `@media screen and (min-width: 550px) and (max-width: 849px)` | Hậu tố `__md` (ví dụ: `span__md="6"`, `gap__md="1rem"`) |
+| **Mobile** | $< 550\text{px}$ (Small) | `@media screen and (max-width: 549px)` | Hậu tố `__sm` (ví dụ: `span__sm="12"`, `gap__sm="0.5rem"`) |
 
 ---
 
-## 3. NGUYÊN TẮC LỒNG THẺ (NESTING INTEGRITY)
+## 2. MA TRẬN QUYẾT ĐỊNH: LƯỚI 12 CỘT (`[row]`) VS FLEXBOX STACK (`[ux_stack]`)
 
-Đây là quy tắc kỹ thuật tối quan trọng để giữ mã nguồn HTML sạch, hợp lệ và tương thích 100% với giao diện kéo thả trực quan của UX Builder:
+Trong Flatsome hiện đại (3.20.5), lập trình viên có 2 công cụ bố cục cực mạnh. Bảng sau chỉ rõ khi nào nên dùng công cụ nào để đạt hiệu năng tải trang và UI/UX cao nhất:
 
-### 3.1. Phân Cấp Khung Tiêu Chuẩn:
-```
-[section]
-  └── [row]
-        └── [col]
-              ├── [elements / content]
-              └── [row_inner] (Nếu muốn chia thêm cột con)
-                    └── [col_inner]
-                          └── [elements]
-```
-
-### 3.2. Cấm Tuyệt Đối Lồng `[row]` Trực Tiếp Trong `[col]`
-> [!CAUTION]
-> **LỖI VỠ LAYOUT NGUY HIỂM:**  
-> Trong CSS của Flatsome, class `.row` mang giá trị `margin-left: -15px; margin-right: -15px;`. Khi bạn đặt `[row]` trực tiếp vào trong `[col]` mà không dùng `[row_inner]`, margin âm sẽ kéo dãn khung ra ngoài phạm vi padding của cột cha, gây hiện tượng thanh cuộn ngang khó chịu trên trình duyệt và phá vỡ cấu trúc Tree View trong UX Builder.
-
-```html
-<!-- SAI: -->
-[row]
-  [col span="6"]
-    [row] <!-- SAI: Gây vỡ layout -->
-      [col span="6"]...[/col]
-    [/row]
-  [/col]
-[/row]
-
-<!-- ĐÚNG: -->
-[row]
-  [col span="6" span__sm="12"]
-    [row_inner] <!-- ĐÚNG: Dùng row_inner và col_inner -->
-      [col_inner span="6" span__sm="12"]...[/col_inner]
-      [col_inner span="6" span__sm="12"]...[/col_inner]
-    [/row_inner]
-  [/col]
-[/row]
-```
-
-### 3.3. Quy Tắc `[ux_banner]` & `[text_box]`
-- Mọi văn bản, tiêu đề, nút CTA nằm trên ảnh bìa `[ux_banner]` **bắt buộc** phải được bọc trong `[text_box]`.
-- Thẻ `[text_box]` chịu trách nhiệm neo tọa độ (`position_x`, `position_y`), đổi màu chữ thông minh theo nền (`text_color="light"` / `"dark"`), và tạo hiệu ứng xuất hiện (`animate="fadeInUp"`).
-
----
-
-## 4. TỐI ƯU KHOẢNG CÁCH (ROW STYLES & GUTTERS)
-
-Thuộc tính `style` trong `[row style="..."]` quyết định khoảng cách giữa các cột (Gutters):
-
-| Kiểu Hàng (`style`) | Khoảng cách Gutters | Trường hợp ứng dụng tối ưu |
+| Tiêu Chí | Hệ Thống Lưới 12 Cột (`[row]` + `[col]`) | Hệ Thống Flexbox Stack (`[ux_stack]`) |
 | :--- | :--- | :--- |
-| `style="default"` | `30px` (mỗi bên 15px) | Khoảng cách chuẩn hóa cho phần lớn các khối bài viết, sản phẩm, tin tức. |
-| `style="large"` | `60px` (mỗi bên 30px) | Tạo không gian thoáng đãng, sang trọng cho website cao cấp, dịch vụ kiến trúc, spa. |
-| `style="small"` | `15px` | Dành cho lưới ảnh nhỏ, thumbnail bộ sưu tập, icon box mật độ dày. |
-| `style="collapse"`| `0px` (Dính liền nhau) | Dành cho các khối Banner cạnh nhau, ảnh ghép toàn màn hình không có viền ngăn. |
-| `style="dashed"` | Có đường đứt nét | Khối phân cách các bước quy trình làm việc (Step 1 -> Step 2 -> Step 3). |
-| `style="divided"` | Có đường kẻ liền mảnh | Phân cách cột rõ ràng theo phong cách báo chí, bảng giá, chỉ số thống kê. |
-| `style="boxed"` | Khung bo viền hộp | Đóng khung nổi toàn bộ hàng thành một card lớn có nền và viền riêng. |
+| **Mục đích chính** | Phân chia bố cục trang lớn (Cột nội dung chính, Sidebar, Lưới 3-4 card sản phẩm, Bố cục Magazine so le). | Dàn các cụm component nhỏ (2 nút bấm CTA, Nhóm Icon + Text, Cụm tác giả, Nhãn tags, Thanh lọc). |
+| **Độ phức tạp DOM** | Nặng hơn (Cần thẻ bọc ngoài `[row]` và từng thẻ `[col]`). | Siêu nhẹ (Chỉ một thẻ bọc `[ux_stack]`, bên trong là các phần tử con trực tiếp). |
+| **Căn lề tự do** | Tuân thủ nghiêm ngặt bước nhảy tỉ lệ chia hết cho 12 (1/12 đến 12/12). | Tự do theo trục Flexbox: `distribute="between|center|start"`, `align="center"`. |
+| **Khoảng cách con** | Thuộc tính `style="small|normal|large"` của `[row]`. | Thuộc tính `gap="0.5rem|1rem|2rem"` tùy biến mượt mà mọi kích thước. |
+| **Đổi hướng Responsive** | Các cột tự động xếp chồng theo độ rộng `span__sm="12"`. | Đổi hướng tức thì: `direction="row" direction__sm="col"`. |
 
 ---
 
-## 5. CĂN CHỈNH CHIỀU CAO ĐỀU NHAU (EQUAL HEIGHT COLUMNS)
+## 3. TOÁN HỌC HỆ THỐNG LƯỚI 12 CỘT (THE 12-COLUMN GRID MATH)
 
-Một trong những vấn đề phổ biến nhất trong thiết kế là các cột bên cạnh nhau có độ dài văn bản không đồng đều, làm chân cột bị so le.
+Khung lưới của Flatsome được xây dựng trên hệ thống 12 phần bằng nhau ($100\% / 12 \approx 8.3333\%$ cho mỗi đơn vị `span`).
 
-Flatsome giải quyết triệt để vấn đề này với thuộc tính `v_align`:
-```html
-[row v_align="equal-height"]
-  [col span="4" span__sm="12" bg_color="#ffffff" depth="2"]
-    <!-- Cột này sẽ tự động kéo dài bằng cột cao nhất bên cạnh -->
+### 3.1. Định Luật Tổng Cột Bằng 12 Trên Desktop
+Trên một hàng `[row]`, tổng `span` của các `[col]` anh em cùng cấp phải bằng chính xác **12**:
+* 2 Cột đều nhau: $6 + 6 = 12$ $\rightarrow$ `[col span="6"]` + `[col span="6"]`
+* 3 Cột đều nhau: $4 + 4 + 4 = 12$ $\rightarrow$ 3 thẻ `[col span="4"]`
+* 4 Cột đều nhau: $3 + 3 + 3 + 3 = 12$ $\rightarrow$ 4 thẻ `[col span="3"]`
+* Bố cục Nội dung Chính + Sidebar: $8 + 4 = 12$ $\rightarrow$ `[col span="8"]` + `[col span="4"]`
+* Bố cục 3 Cột so le (Lớn ở giữa): $3 + 6 + 3 = 12$ $\rightarrow$ `[col span="3"]` + `[col span="6"]` + `[col span="3"]`
+
+### 3.2. Định Luật Xếp Chồng An Toàn Trên Mobile (`span__sm="12"`)
+Màn hình điện thoại ($<550\text{px}$) có không gian hẹp. Quy tắc an toàn tuyệt đối là cho mỗi cột chiếm trọn 1 dòng:
+```shortcode
+[row]
+  [col span="4" span__md="6" span__sm="12"][/col]
+  [col span="4" span__md="6" span__sm="12"][/col]
+  [col span="4" span__md="12" span__sm="12"][/col]
+[/row]
+```
+* **Desktop ($\ge 850\text{px}$):** 3 cột ngang hàng ($4 + 4 + 4 = 12$).
+* **Tablet ($550-849\text{px}$):** Hàng trên 2 cột ($6 + 6 = 12$), hàng dưới 1 cột lớn ($12$).
+* **Mobile ($< 550\text{px}$):** 3 cột xếp chồng 100% màn hình, không bị chèn ép chữ.
+
+---
+
+## 4. TÍNH NĂNG NATIVE ĐẢO THỨ TỰ CỘT TRÊN MOBILE (`force_first`)
+
+Trước đây, khi muốn đưa cột hình ảnh lên trước trên thiết bị di động, người dùng thường phải viết mã CSS phức tạp. Trong Flatsome 3.20.5, tính năng này đã có sẵn trực tiếp trong shortcode:
+
+### Cú pháp:
+* `[col span="6" force_first="small"]`: Đẩy cột này lên **vị trí đầu tiên khi xem trên Mobile**.
+* `[col span="6" force_first="medium"]`: Đẩy cột này lên **vị trí đầu tiên khi xem trên Tablet**.
+
+### Ứng dụng thực chiến (Bố cục Văn bản Trái — Hình ảnh Phải):
+* **Trên Desktop:** Người đọc nhìn thấy Văn bản bên trái $\rightarrow$ Ảnh bên phải.
+* **Trên Mobile:** Bạn muốn khách hàng xem Ảnh trước để thu hút $\rightarrow$ Gán `force_first="small"` cho cột ảnh!
+```shortcode
+[row v_align="middle"]
+  [col span="6" span__sm="12"]
+    <h3>Giới Thiệu Sản Phẩm</h3>
+    <p>Nội dung mô tả chi tiết tính năng sản phẩm...</p>
+    [button text="Xem Ngay"]
   [/col]
-  [col span="4" span__sm="12" bg_color="#ffffff" depth="2"]
-    <!-- Cột này có nhiều nội dung hơn -->
-  [/col]
-  [col span="4" span__sm="12" bg_color="#ffffff" depth="2"]
-    <!-- Cột này cũng dài đều đáy hoàn hảo -->
+  [col span="6" span__sm="12" force_first="small"]
+    [ux_image id="123"]
   [/col]
 [/row]
 ```
 
-Các giá trị khác của `v_align`:
-- `v_align="top"`: Canh sát mép trên cùng (Mặc định).
-- `v_align="middle"`: Canh đều chính giữa theo chiều dọc (Rất đẹp khi cột trái là Ảnh và cột phải là Chữ).
-- `v_align="bottom"`: Canh sát đáy hàng.
+---
+
+## 5. CÔNG THỨC TOÁN CÂN BẰNG CHIỀU CAO & BẢO TOÀN ASPECT-RATIO
+
+### 5.1. Bằng chứng mã nguồn về Aspect-Ratio của Container Ảnh
+Trong file gốc `inc/builder/shortcodes/ux_image.php` (dòng 62–65), Flatsome điều khiển chiều cao của ảnh bằng cơ chế:
+```css
+.image-cover {
+    padding-top: {{ height }};
+}
+```
+* Container ngoài cùng giữ khoảng không gian chiều cao bằng phần trăm padding-top.
+* Thẻ `<img>` bên trong được gán `position: absolute; width: 100%; height: 100%; object-fit: cover;`.
+* ⚠️ **CẢNH BÁO SỐNG CÒN:** Nếu vô tình viết CSS `padding-top: 0 !important;` lên class `.image-cover`, container sẽ sập chiều cao về 0px và ảnh lập tức biến mất!
+
+### 5.2. Công thức Cân Bằng Chiều Cao Bố Cục Tạp Chí (Magazine Layout)
+Bài toán: Cột trái là **1 Card lớn (Ảnh + Tiêu đề + Trích dẫn)**, Cột phải là **3 Bài viết nhỏ xếp chồng dọc** (`style="vertical"`).
+Làm sao để Card bên trái có chiều cao bằng khít với tổng 3 bài bên phải trên Desktop, nhưng không bị méo ảnh trên Mobile?
+
+$$\text{Tổng Chiều Cao Cột Phải} = (3 \times \text{Card Height}) + (2 \times \text{Row Gap})$$
+
+* Giả sử mỗi bài nhỏ bên phải cao khoảng $130\text{px}$, tổng 3 bài $\approx 410\text{px}$.
+* Ở cột bên trái, card lớn có tiêu đề + trích dẫn cao khoảng $120\text{px}$.
+* Phần ảnh thumbnail bên trái cần cao $\approx 290\text{px}$.
+* Tỉ lệ `image_height` chuẩn xác để đạt được kích thước này trên màn hình Desktop thông thường là **$89\%$**!
+* Khi xuống Mobile ($<550\text{px}$), cột trái và phải xếp chồng lên nhau. Do đó, tỉ lệ ảnh cần giảm về mức chuẩn **$65\%$** để màn hình điện thoại không bị chiếm trọn bởi 1 bức ảnh quá dài:
+
+```css
+/* Tối ưu cân bằng ảnh bài viết nổi bật bên trái */
+.featured-post-card .image-cover {
+    padding-top: 89% !important; /* Cân bằng với 3 hàng bài viết bên phải trên Desktop */
+}
+
+@media (max-width: 549px) {
+    .featured-post-card .image-cover {
+        padding-top: 65% !important; /* Gọn gàng, chuẩn tỉ lệ vàng trên Mobile */
+    }
+}
+```
 
 ---
 
-## 6. TOÁN HỌC KHỚP CHIỀU CAO CHUẨN PIXEL (HEIGHT MATCHING MATH)
+## 6. QUY TẮC CỘT DÍNH THÔNG MINH (STICKY COLUMN)
 
-Trong các bố cục E-commerce chia 2 cột (Cột trái Slider lớn `span="8"`, Cột phải 2 hoặc 3 Banner phụ `span="4"` xếp chồng), **bắt buộc** chiều cao tổng của cột phụ phải bằng chính xác chiều cao của slider chính để hai cột bằng phẳng tuyệt đối.
-
-### Công thức 2 Banner Phụ Xếp Chồng (Kèm 1 Gap):
-$$\text{Height}_{\text{Slider}} = 2 \times \text{Height}_{\text{SubBanner}} + \text{Height}_{\text{Gap}}$$
-
-- **Ví dụ chuẩn Desktop:**
-  - Slider chính: `height="470px"`
-  - 2 Banner phụ: `height="230px"`
-  - Khoảng cách ở giữa: `[gap height="10px"]`
-  - $\rightarrow 230\text{px} \times 2 + 10\text{px} = 470\text{px}$ (Khớp 100% không lệch 1 pixel!).
-- **Ví dụ chuẩn Tablet (`height__md`):**
-  - Slider chính: `height__md="380px"`
-  - 2 Banner phụ: `height__md="185px"`
-  - $\rightarrow 185\text{px} \times 2 + 10\text{px} = 380\text{px}$.
-
-### Công thức 3 Banner Phụ Xếp Chồng (Kèm 2 Gaps):
-$$\text{Height}_{\text{Slider}} = 3 \times \text{Height}_{\text{SubBanner}} + 2 \times \text{Height}_{\text{Gap}}$$
-- **Ví dụ:** Slider `height="560px"`, 3 Banner phụ mỗi banner `height="173px"`, 2 gaps mỗi gap `10px` ($173 \times 3 + 20 \approx 560\text{px}$).
-
----
-
-## 7. CÂN BẰNG CHIỀU CAO CHUẨN XÁC GIỮA BÀI NỔI BẬT & DANH SÁCH (HEIGHT BALANCING)
-
-Trong bố cục tin tức gồm 1 bài lớn (bên trái `span="4"`) và danh sách 6 bài viết nhỏ 3 hàng (bên phải `span="8"`):
-- **Nguyên nhân hụt đáy:** Với tỷ lệ ảnh mặc định `image_height="72%"`, tổng chiều cao bài viết bên trái chỉ đạt khoảng 283px (ảnh 223px + text 60px), trong khi 3 hàng bài viết bên phải có tổng chiều cao là 331px. Chênh lệch đúng 48px khiến đáy bài bên trái bị hụt lên trên.
-- **CẢNH BÁO SẬP ẢNH (QUAN TRỌNG):** Tuyệt đối **KHÔNG** dùng CSS gán `padding-top: 0 !important;` hay `position: absolute` lên `.image-cover`. Flatsome sử dụng cơ chế Padding Aspect-Ratio để tạo kích thước hiển thị cho ảnh; việc triệt tiêu `padding-top` sẽ khiến container sụp đổ về 0px và làm **mất hoàn toàn hình ảnh**.
-- **Giải pháp Chuẩn Mực 100%:**
-  1. **Tính toán tỷ lệ bù đắp:** Độ chênh lệch $48\text{px} / 305\text{px} \approx 16\%$. Nâng tỷ lệ ảnh từ $72\% + 16\% = 88\% - 89\%$.
-  2. **Shortcode:** Khai báo trực tiếp `image_height="89%"`.
-  3. **CSS:** Thiết lập `.featured-news-box .image-cover { padding-top: 89% !important; }` trên Desktop (`@media (min-width: 850px)`).
-  4. **Kết quả:** Đáy bài lớn bên trái phẳng tắp 100% từng pixel với mép đáy hàng thứ 3 bên phải, ảnh giữ nguyên độ sắc nét và hiệu ứng hover mượt mà.
-
----
-
-## 8. QUY CHUẨN THIẾT KẾ CHO TABLET VÀ MOBILE (RESPONSIVE BLUEPRINT)
-
-Để website đạt điểm tối đa trên Google Mobile-Friendly Test và mang lại trải nghiệm mượt mà, kỹ sư thiết kế Flatsome bắt buộc phải áp dụng bộ quy chuẩn dưới đây cho Tablet và Mobile:
-
-### 8.1. Quy Chuẩn Thu Nhỏ Chiều Cao Banner (`[ux_banner]` Scaling)
-Nếu giữ nguyên chiều cao Desktop (ví dụ: `500px`) trên màn hình điện thoại xoay dọc, banner sẽ chiếm toàn bộ màn hình khiến người dùng không thấy được nội dung phía dưới:
-- **Tỷ lệ vàng thu nhỏ:**
-  - Desktop: `height="480px"` đến `"550px"`
-  - Tablet: `height__md="350px"` đến `"380px"`
-  - Mobile: `height__sm="200px"` đến `"250px"`
-- **Ví dụ mẫu chuẩn:**
-  ```html
-  [ux_banner height="480px" height__md="350px" height__sm="220px" bg="URL_ANH"]
-  ```
-
-### 8.2. Quy Chuẩn Hộp Chữ Trên Banner (`[text_box]` Coordinates)
-Trên màn hình điện thoại hẹp, hộp chữ canh lề trái với độ rộng `50%` sẽ bị dồn ép thành các dòng 1-2 từ rất xấu:
-- **Nguyên tắc chuyển đổi:**
-  - Desktop: `width="50%" position_x="10" position_y="50" text_align="left"`
-  - Mobile: `width__sm="90%" position_x__sm="50" position_y__sm="50" text_align="center"`
-- **Kết quả:** Trên điện thoại, hộp chữ tự động canh giữa màn hình và mở rộng ra 90% diện tích, giúp câu từ thông thoáng, dễ đọc.
-
-### 8.3. Bố Cục Danh Sách Sản Phẩm & Tin Tức Trên Mobile:
-1. **Lưới sản phẩm danh mục (`[ux_products]`):**
-   - Luôn sử dụng `columns__sm="2"`. Tuyệt đối không dùng 1 cột vì ảnh sản phẩm sẽ bị phóng quá to, chiếm hết diện tích cuộn của khách hàng.
-   - Bổ sung `equalize_box="true"` để các thẻ sản phẩm 2 cột bằng phẳng đều tăm tắp.
-2. **Khối Flash Sale / Sản phẩm ưu đãi:**
-   - Khuyến nghị dùng `type="slider" columns__sm="2" slider_nav_style="simple"` để khách hàng có thể dùng ngón tay vuốt ngang tiện lợi (Touch Swipe).
-3. **Danh sách tin tức bài viết (`[blog_posts]`):**
-   - Với bố cục 1 bài lớn + danh sách bài nhỏ: Trên Mobile bắt buộc danh sách nhỏ phải chuyển về `columns__sm="1"`, giúp hình thumbnail và tiêu đề nằm ngang đọc rõ ràng, không bị chèn ép.
-
-### 8.4. Quy Chuẩn Vùng Chạm & Nút Bấm Di Động (Touch Target $\ge 44\text{px}$)
-Theo chuẩn Google Core Web Vitals (INP - Interaction to Next Paint) và Accessibility:
-- Nút bấm `[button]` trên Mobile nên có thuộc tính `size__sm="medium"` hoặc thêm `expand="1"` để nút kéo dài 100% bề ngang, ngón cái dễ dàng nhấn trúng.
-- Khoảng cách giữa các liên kết / nút bấm tối thiểu `10px` để tránh bấm nhầm.
-
-### 8.5. Kỹ Thuật Đảo Thứ Tự Cột Trên Mobile (Column Reordering):
-Khi thiết kế 2 cột: Cột 1 là Văn bản, Cột 2 là Ảnh sản phẩm. Trên Desktop, chữ bên trái ảnh bên phải là chuẩn. Nhưng trên Mobile, bạn muốn **Ảnh sản phẩm hiện trước rồi mới đến chữ**:
-- Sử dụng class `.flex-col-reverse-small` hoặc CSS:
-  ```css
-  @media (max-width: 549px) {
-      .reverse-mobile-row {
-          display: flex !important;
-          flex-direction: column-reverse !important;
-      }
-  }
-  ```
-
-
-
+Flatsome 3.20.5 hỗ trợ cột bám dính khi cuộn trang dài (rất thích hợp cho Sidebar, Giỏ hàng thu gọn hoặc Form đặt lịch):
+* `[col span="4" sticky="true"]`: Dùng CSS `position: sticky`. Yêu cầu thẻ cha không bị gán `overflow: hidden`.
+* `[col span="4" sticky="true" sticky_mode="javascript"]`: Dùng JavaScript theo dõi viewport, giúp tính toán khoảng cách mượt mà và dừng lại chính xác ở chân trang `footer`.
